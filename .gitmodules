@@ -1,0 +1,3 @@
+[submodule "pubxml/publishing-xml"]
+	path = pubxml/publishing-xml
+	url = https://github.com/BlackEarth/publishing-xml.git
