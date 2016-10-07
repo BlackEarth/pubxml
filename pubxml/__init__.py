@@ -1,7 +1,8 @@
 
 import os
+from bl.dict import Dict
 schemas = os.path.join(os.path.dirname(__file__), 'resources', 'publishing-xml', 'schemas')
-NS = {
+NS = Dict(**{
     'pub': "http://publishingxml.org/ns",
     'html': "http://www.w3.org/1999/xhtml",
     # 'xl': "http://www.w3.org/1999/xlink",
@@ -16,4 +17,4 @@ NS = {
     'epub': "http://www.idpf.org/2007/ops",
     'ncx': "http://www.daisy.org/z3986/2005/ncx/",
     'cp': "http://schemas.openxmlformats.org/package/2006/metadata/core-properties",    # Microsoft
-}
+})
