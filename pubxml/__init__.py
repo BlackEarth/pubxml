@@ -2,6 +2,7 @@
 import os
 from bl.dict import Dict
 schemas = os.path.join(os.path.dirname(__file__), 'resources', 'publishing-xml', 'schemas')
+
 NS = Dict(**{
     'pub': "http://publishingxml.org/ns",
     'html': "http://www.w3.org/1999/xhtml",
