@@ -30,14 +30,13 @@ class Converter(Dict):
             out_class_str = out_class
         
         # load converters.json 
-        print(converters_filename)
         with open(converters_filename, 'r') as f:
             converters_list = json.load(f)
 
         # try to find the converter, return if found
         for converter in converters_list:
-            if converter[0:2] == [in_class, out_class] and converter[2] is not None:
+            if converter[0:2] == [in_class_str, out_class_str] and converter[2] is not None:
                 mod_name = '.'.join(converter[2].split('.')[:-1])
                 class_name = converter[2].split('.')[-1]
                 mod = import_module(mod_name)
-                return mod.__dict__.get(class_name)
+                return mod.__dict__.get(class_name)()
