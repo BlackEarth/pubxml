@@ -1,5 +1,8 @@
 # XT .icml to pub:document
 
+import logging
+log = logging.getLogger(__name__)
+
 import os, re, json, sys
 from lxml import etree
 from bl.id import random_id
@@ -318,13 +321,16 @@ def HyperlinkTextOrCrossReferenceSource(elem, **params):
 # == TextVariableInstance == 
 @transformer.match("elem.tag=='TextVariableInstance'")
 def TextVariableInstance(elem, **params):
-    text_variable = elem.xpath("//TextVariable[@Self='%s']" % elem.get('AssociatedTextVariable'))[0]
-    variable_type = text_variable.get('VariableType')
-    if variable_type == 'XrefPageNumberType':
-        # page references 
-        return [B.pub.cref(elem.get('ResultText'))]
-    elif variable_type == 'ModificationDateType':
-        return [B.pub.modified(idformat=text_variable.find('DateVariablePreference').get('Format'))]
+    text_variable = XML.find(elem, "//TextVariable[@Self='%s']" % elem.get('AssociatedTextVariable'))
+    if text_variable is not None:
+        variable_type = text_variable.get('VariableType')
+        if variable_type == 'XrefPageNumberType':
+            # page references 
+            return [B.pub.cref(elem.get('ResultText'))]
+        elif variable_type == 'ModificationDateType':
+            return [B.pub.modified(idformat=text_variable.find('DateVariablePreference').get('Format'))]
+        else:
+            return [elem.get('ResultText')]
     else:
         return [elem.get('ResultText')]
 
