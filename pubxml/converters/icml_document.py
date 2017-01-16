@@ -369,7 +369,8 @@ def XMLElement(elem, **params):
             elem.get('MarkupTag').split('/')[-1],
             transformer(elem.getchildren(), **params))
     for attr in elem.xpath("XMLAttribute"):
-        e.set(attr.get('Name'), attr.get('Value'))
+        if 'xmlns:' not in attr.get('Name'):
+            e.set(attr.get('Name'), attr.get('Value'))
     return [e]
 
 # == TextFrame == 
