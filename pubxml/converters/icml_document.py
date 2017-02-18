@@ -390,6 +390,24 @@ def ProcessingInstruction(elem, **params):
         r = []
     return r + [elem.tail]
 
+# == Changes == 
+@transformer.match("elem.tag=='Change'")
+def Change(elem, **params):
+    """Deal with redlining. For now, just provide the results. Later, we'll support the HTML <ins> and <del> tags.
+    """
+    # attrib = dict(
+    #     datetime=elem.get('Date'),
+    #     title="user=%r" % elem.get('UserName').replace('$ID/',''),
+    # )
+    if elem.get('ChangeType') in ['InsertedText', 'MovedText']:
+        # res = B.html('ins', attrib, transformer(elem.getchildren(), **params))
+        return transformer(elem.getchildren(), **params)
+    elif elem.get('ChangeType')=='DeletedText':
+        # res = B.html('del', attrib, transformer(elem.getchildren(), **params))
+        pass
+    else:
+        log.error("Invalid ChangeType: %r" % elem.get('ChangeType'))
+
 # == omitted/ignored == 
 omitted = [
     'Bookmark', 'Cell', 'Color', 'ColorGroup', 'Column', 'CompositeFont', 'CrossReferenceFormat', 
@@ -399,7 +417,7 @@ omitted = [
     'RootParagraphStyleGroup', 'RootTableStyleGroup', 'StandaloneDocumentPreference', 
     'StoryPreference', 'StrokeStyle', 'Swatch', 'TextWrapPreference',
     'TinDocumentDataObject', 'TransparencyDefaultContainerObject', 'Condition', 'TextVariable',
-    'KinsokuTable', 'MojikumiTable', 'XMLAttribute', 'AnchoredObjectSetting'
+    'KinsokuTable', 'MojikumiTable', 'XMLAttribute', 'AnchoredObjectSetting', 'Polygon'
 ]
 @transformer.match("elem.tag in %s" % str(omitted))
 def omissions(elem, **params):

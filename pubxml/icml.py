@@ -46,27 +46,34 @@ class ICML(XML):
         # nothing for now
         return etree.Element("{%(pub)s}metadata" % pubxml.NS)
 
-    def stylesheet(self, fn=None, points_per_em=POINTS_PER_EM):
+    def stylesheet(self, fn=None, points_per_em=None):
         """create a CSS stylesheet, using the style definitions in the ICML file."""
 
         from bl.file import File
-        from .styles import Styles
+        from bg.models.styles import Styles
+
+        if points_per_em is None: points_per_em = POINTS_PER_EM
 
         styles = Styles()
         for style in self.root.xpath("//CharacterStyle | //ParagraphStyle"):
             clsname = self.classname(style.get('Name'))
             if style.tag == 'CharacterStyle':
-                selectors = ['span.' + clsname, 'a.' + clsname]
+                if clsname == 'No-character-style':
+                    selector = 'a, span'
+                else:
+                    selector = 'a.' + clsname + ', span.' + clsname
             else:
-                selectors = ['p.' + clsname]
-                if len(self.root.xpath(
-                        "//ParagraphStyleRange[@AppliedParagraphStyle='%s' and .//Table]" 
-                        % style.get('Self'))) > 0:
-                    selectors += ['div.' + clsname]
+                if clsname == 'No-paragraph-style':
+                    selector = 'p'
+                else:
+                    selector = 'p.' + clsname
+                    if len(self.root.xpath(
+                            "//ParagraphStyleRange[@AppliedParagraphStyle='%s' and .//Table]" 
+                            % style.get('Self'))) > 0:
+                        selector += ', div.' + clsname
 
-            styleblock = self.style_block(style, points_per_em=points_per_em)
-            for selector in selectors:
-                styles[selector] = styleblock
+            styles[selector] = self.style_block(style, points_per_em=points_per_em)
+            # print(selector, styles[selector])
 
         ss = Text(fn=fn or os.path.splitext(self.fn)[0]+'.css', text=Styles.render(styles))
         return ss
@@ -87,7 +94,7 @@ class ICML(XML):
 
     def style_block(self, elem, points_per_em=POINTS_PER_EM):
         "query style elem and return a style definition block"
-        s = self.style_attributes(elem)
+        s = self.style_attributes(elem, points_per_em=points_per_em)
 
         # inheritance -- unpack, more reliable than using @extend
         based_on = elem.find('Properties/BasedOn')
@@ -99,6 +106,7 @@ class ICML(XML):
                 for k in bs.keys():
                     if k not in s.keys():
                         s[k] = bs[k]
+
         return s
 
     def include_mixin(self, style, mixin):
@@ -110,6 +118,18 @@ class ICML(XML):
         """query style elem for attributes and return a CSS style definition block.
         """
         s = Dict()
+
+        # color
+        if elem.get('FillColor') is not None:
+            color = elem.get('FillColor').split('/')[-1]
+            if len(color.split(' '))==3:
+                r,g,b = [c.split('=')[-1] for c in color.split(' ')]
+                s['color:'] = 'rgb(%s,%s,%s)' % (r,g,b)
+            elif color=='Black':
+                s['color:'] = 'rgb(0,0,0)'
+            elif color=='Paper':
+                s['color:'] = 'rgb(255,255,255)'
+            # print(color, '=', s.get('color:') or 'not converted')
 
         # direction -- can't be included in epub
         # if elem.get('CharacterDirection') == 'LeftToRightDirection':
@@ -142,9 +162,9 @@ class ICML(XML):
             s['font-variant:'] = ' '.join(fv)
 
         # hyphens
-        if elem.get('Hyphenation') != 'true':
-            s['hyphens:'] = 'none'
-            s['-webkit-hyphens:'] = 'none'
+        # if elem.get('Hyphenation') == 'false':
+        #     s['hyphens:'] = 'none'
+        #     s['-webkit-hyphens:'] = 'none'
 
         # letter-spacing
         if elem.get('DesiredLetterSpacing') is not None:
