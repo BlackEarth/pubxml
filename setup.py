@@ -1,4 +1,3 @@
-
 import os, json
 from setuptools import setup, find_packages
 from codecs import open
@@ -14,6 +13,8 @@ with open(os.path.join(PATH, 'README.md'), encoding='utf-8') as f:
 if __name__=='__main__':
     setup(
         long_description=README,
-        packages=find_packages(exclude=['contrib', 'docs', 'tests']),
+        long_description_content_type='text/markdown',
+        packages=find_packages(where='src'),
+        include_package_data=True,
         **CONFIG
     )

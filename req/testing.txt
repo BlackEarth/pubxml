@@ -1,2 +1,4 @@
 -r install.txt
 flake8==3.7.8
+pytest
+tox

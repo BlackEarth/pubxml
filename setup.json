@@ -21,6 +21,7 @@
   "package_data": {
     "": []
   },
+  "package_dir": {"": "src"},
   "data_files": [],
   "scripts": []
 }
