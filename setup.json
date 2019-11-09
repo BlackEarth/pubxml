@@ -1,7 +1,7 @@
 {
-  "name": "",
+  "name": "pubxml",
   "version": "0.1.0",
-  "description": "",
+  "description": "Publishing XML datamodels, methods, and functions",
   "url": "https://gitlab.com/blackearth/",
   "author": "Sean Harrison",
   "author_email": "sah@bookgenesis.com",
