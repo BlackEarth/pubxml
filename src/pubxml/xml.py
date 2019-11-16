@@ -30,13 +30,13 @@ class XML:
 
     def __repr__(self):
         return (
-            f'{self.__class__.__name__}(filename="{self.filename}", root={self.root})'
+            f'{self.__class__.__name__}(filename="{self.filename}", root="{self.root}")'
         )
 
-    def write(self, filename=None, method='c14n', **args):
+    def write(self, filename=None, method='c14n', **kwargs):
         """
         Write the XML document to a file (using the XML.tree.write() method).
-        
+
         * filename=None: An optional filename to write to (default=self.filename).
         * method='c14n': Canonicalize output by default.
         """
@@ -61,7 +61,7 @@ class XML:
         * nsmap: the namespace map to use with the expression (default = Document nsmap)
         * extensions: additional xpath extension functions to make available
         * strings: default='plain' to return plain strings, 'smart' to use smart strings
-          (smart strings have a `.getparent()` method). Smart strings are off by default 
+          (smart strings have a `.getparent()` method). Smart strings are off by default
           for efficiency.
         * **params: additional parameters that are made available to xpath.
         """
@@ -75,11 +75,13 @@ class XML:
         }
         return element.xpath(path, **xpath_args)
 
-    def first(self, path, context=None, nsmap=None, exts=None, strings='plain', **args):
+    def first(
+        self, path, context=None, nsmap=None, exts=None, strings='plain', **params
+    ):
         """
         Return first xpath result for the given context or document root, or None.
         """
         results = self.xpath(
-            path, context=context, nsmap=nsmap, exts=exts, strings='plain', **args
+            path, context=context, nsmap=nsmap, exts=exts, strings='plain', **params
         )
         return next(iter(results), None)
