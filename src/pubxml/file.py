@@ -11,7 +11,7 @@ class File:
         return Path(self.filename)
 
     @classmethod
-    def readable_size(C, size, suffix='B', decimals=1, sep='\u00a0'):
+    def size_str(C, size, suffix='B', decimals=1, sep='\u00a0'):
         """
         Given the file size in bytes, return a string with the human-readable size.
         """
