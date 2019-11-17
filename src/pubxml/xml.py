@@ -51,12 +51,12 @@ class XML:
             return Path(self.filename)
 
     def xpath(
-        self, path, element=None, nsmap=None, extensions=None, strings='plain', **params
+        self, expr, element=None, nsmap=None, extensions=None, strings='plain', **params
     ):
         """
         Return xpath results for the given context or document root.
 
-        * path: the xpath expression
+        * expr: the xpath expression
         * element: the element context in which to evaluate the xpath expression
         * nsmap: the namespace map to use with the expression (default = Document nsmap)
         * extensions: additional xpath extension functions to make available
@@ -73,7 +73,7 @@ class XML:
             'smart_strings': strings == 'smart',  # return 'plain'
             **params,
         }
-        return element.xpath(path, **xpath_args)
+        return element.xpath(expr, **xpath_args)
 
     def first(
         self, path, context=None, nsmap=None, exts=None, strings='plain', **params
@@ -85,3 +85,16 @@ class XML:
             path, context=context, nsmap=nsmap, exts=exts, strings='plain', **params
         )
         return next(iter(results), None)
+
+    def prefixed_tag(self, element, nsmap=None):
+        nsmap = nsmap or self.nsmap
+        tag = element.tag.split('}')[-1]
+        if element.prefix:
+            return f'{element.prefix}:{tag}'
+        elif '}' in element.tag:
+            ns = element.tag.split('}')[0].strip('{}')
+            if nsmap and ns in nsmap.values():
+                keys, values = list(nsmap.keys()), list(nsmap.values())
+                prefix = keys[values.index(ns)]
+                return f'{prefix}:{tag}'
+        return tag
