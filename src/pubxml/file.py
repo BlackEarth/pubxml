@@ -11,7 +11,7 @@ class File:
         return Path(self.filename)
 
     @classmethod
-    def size_str(C, size, suffix='B', decimals=1, sep='\u00a0'):
+    def size_str(C, size, suffix='B', decimals=1, sep='\u00a0', k=1000):
         """
         Given the file size in bytes, return a string with the human-readable size.
         """
@@ -20,7 +20,7 @@ class File:
             return
         size = float(size)
         for unit in SIZE_UNITS:
-            if abs(size) < 1024 or unit == SIZE_UNITS[-1]:
+            if abs(size) < k or unit == SIZE_UNITS[-1]:
                 return "{size:.{decimals}f}{sep}{unit}{suffix}".format(
                     size=size,
                     unit=unit,
@@ -28,4 +28,4 @@ class File:
                     sep=sep,
                     decimals=decimals if SIZE_UNITS.index(unit) > 0 else 0,
                 )
-            size /= 1024
+            size /= k
