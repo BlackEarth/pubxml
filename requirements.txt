@@ -6,4 +6,4 @@
 #
 cssutils==1.0.2
 datamodels==0.8.2
-lxml==4.4.1
+lxml==4.6.3
